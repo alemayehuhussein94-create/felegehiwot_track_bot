@@ -5,6 +5,22 @@ import sqlite3
 from datetime import datetime
 import csv
 import os
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run():
+    app.run(host='0.0.0.0', port=10000)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
 
 # ⚠️ የራስህን የቦት ቶከን (Token) እዚህ አስገባ
 BOT_TOKEN = os.environ.get('TELEGRAM_TOKEN')
@@ -1377,7 +1393,10 @@ def export_and_reset_yearly(message):
         conn.close()
         if os.path.exists(file_name):
             os.remove(file_name)
-
-   
-print("ቦቱ እየሰራ ነው...")
-bot.infinity_polling(timeout=60, long_polling_timeout=60)
+# ይህ ክፍል መጨረሻ ላይ መሆን አለበት
+if __name__ == "__main__":
+    # 1. ሬንደር ፖርት እንዲያገኝ የሚያደርገው (አትጥፋው)
+    keep_alive() 
+    
+    # 2. የቴሌግራም መልእክቶችን የሚቀበለው (ይህን በድሮው ፋንታ ተጠቀምበት)
+    bot.infinity_polling(none_stop=True)
